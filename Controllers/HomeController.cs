@@ -6,6 +6,7 @@ namespace DotNetMVC.Controllers;
 
 public class HomeController : Controller
 {
+    // ToDo: Modify _Layout.cshtml so that the navbar is only visible in dashboard and user pages not in initial intro, sign in, sign up
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)
@@ -15,7 +16,11 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        // returns webpage inside view directory (same folder name as the controller name (home) and
+        // same html page name as the controller function name (index) -- this behaviour is by default)
         return View();
+        // Can override the default behaviour and return another html page/view using this
+        // return View("Privacy");
     }
 
     public IActionResult Privacy()
