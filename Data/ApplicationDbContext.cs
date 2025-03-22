@@ -11,4 +11,3 @@ namespace DotNetMVC.Data
 		public DbSet<Category> Categories { get; set; }
 	}
 }
-
