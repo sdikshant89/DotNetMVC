@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace DotNetMVC.Models
 {
@@ -8,7 +9,12 @@ namespace DotNetMVC.Models
 		public int CategoryId { get; set; }
 
 		[Required]
+		[MaxLength(30)]
+		[DisplayName("Category Name")]
 		public string Name { get; set; }
-		public int DisplayOrder { get; set; }
+
+		[Range(1, 100, ErrorMessage = "Enter order in range 1 - 100")]
+        [DisplayName("Display Order")]
+        public int DisplayOrder { get; set; }
 	}
 }
