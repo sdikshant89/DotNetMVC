@@ -7,8 +7,6 @@ using DotNetMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace DotNetMVC.Controllers
 {
 
@@ -20,7 +18,6 @@ namespace DotNetMVC.Controllers
             _db = db;
         }
 
-        // GET: /<controller>/
         public IActionResult Index()
         {
             var viewModel = new CategoryIndexViewModel
@@ -31,25 +28,111 @@ namespace DotNetMVC.Controllers
             return View(viewModel);
         }
 
-        public IActionResult Create()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(CategoryIndexViewModel model)
         {
+            if (ModelState.IsValid)
+            {
+                // Check for duplicates using AsNoTracking to avoid tracking issues
+                var duplicate = await _db.Categories
+                    .AsNoTracking()
+                    .AnyAsync(c => c.Name.ToLower() == model.CategoryForm.Name.ToLower());
+
+                if (!duplicate)
+                {
+                    _db.Categories.Add(model.CategoryForm);
+                    await _db.SaveChangesAsync();
+                    TempData["SuccessMessage"] = model.CategoryForm.Name + " Category added!";
+                    return RedirectToAction("Index", "Category");
+                }
+                else
+                {
+                    // TempData is only available for next render
+                    TempData["ErrorMessage"] = "A category with this name already exists";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error occurred -- Entry not valid! Try again";
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Edit(int? categoryId)
+        {
+            if(categoryId == null || categoryId == 0)
+            {
+                return NotFound();
+            }
+            Category? obj = _db.Categories.Find(categoryId);
+            if(object.Equals(obj, null))
+            {
+                return NotFound();
+            }
+            return View(obj);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Category model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check for duplicate name (excluding the current category)
+                var duplicate = await _db.Categories
+                    .AsNoTracking()
+                    .AnyAsync(c => c.CategoryId!=model.CategoryId && c.Name.ToLower() == model.Name.ToLower());
+                if (!duplicate)
+                {
+                    try
+                    {
+                        // Approach 1: Attach and mark as modified
+                        _db.Entry(model).State = EntityState.Modified;
+
+                        // Or Approach 2: Find and update
+                        // var existingCategory = await _db.Categories.FindAsync(model.Id);
+                        // if (existingCategory != null)
+                        // {
+                        //     _db.Entry(existingCategory).CurrentValues.SetValues(model);
+                        // }
+
+                        await _db.SaveChangesAsync();
+                        return RedirectToAction("Index", "Category");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Works only inside the form tag, not outside
+                        ModelState.AddModelError("", "Error updating record: " + ex.Message);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("Name", "A category with this name already exists");
+                }   
+            }
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(CategoryIndexViewModel model)
+        public async Task<IActionResult> Delete(CategoryIndexViewModel model)
         {
-            var categories = _db.Categories.ToList();
-
-            if (string.Equals(string.Empty, model.CategoryForm.Name) &&
-                !categories.Any(c => c.Name.ToLower() == model.CategoryForm.Name.ToLower()))
+            if (ModelState.IsValid)
             {
-                _db.Categories.Add(model.CategoryForm);
-                await _db.SaveChangesAsync();
+                var existingCategory = await _db.Categories.FindAsync(model.CategoryForm.CategoryId);
+                if (existingCategory != null)
+                {
+                    _db.Categories.Remove(existingCategory);
+                    await _db.SaveChangesAsync();
+                    TempData["SuccessMessage"] = existingCategory.Name + " Category deleted!";
+                    return RedirectToAction("Index", "Category");
+                }else
+                {
+                    TempData["ErrorMessage"] = "Couldn't find record to delete";
+                }
             }
-            //Todo Check how to send custom return message and show in screen
-            return RedirectToAction("Index", "Category");
+            return RedirectToAction("Index");
         }
     }
 }
