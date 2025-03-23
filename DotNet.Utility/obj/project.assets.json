@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/dikshantsharma/Work/Github/DotNet.Utility/DotNet.Utility.csproj",
+      "projectUniqueName": "/Users/dikshantsharma/Work/Github/DotNetSolution/DotNet.Utility/DotNet.Utility.csproj",
       "projectName": "DotNet.Utility",
-      "projectPath": "/Users/dikshantsharma/Work/Github/DotNet.Utility/DotNet.Utility.csproj",
+      "projectPath": "/Users/dikshantsharma/Work/Github/DotNetSolution/DotNet.Utility/DotNet.Utility.csproj",
       "packagesPath": "/Users/dikshantsharma/.nuget/packages/",
-      "outputPath": "/Users/dikshantsharma/Work/Github/DotNet.Utility/obj/",
+      "outputPath": "/Users/dikshantsharma/Work/Github/DotNetSolution/DotNet.Utility/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/dikshantsharma/.nuget/NuGet/NuGet.Config"
@@ -38,6 +38,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
