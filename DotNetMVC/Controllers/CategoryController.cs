@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DotNetMVC.Data;
-using DotNetMVC.Models;
+﻿using DotNet.DataAccess.Data;
+using DotNet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

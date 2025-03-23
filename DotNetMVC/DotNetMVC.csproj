@@ -17,11 +17,20 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Data\" />
     <None Remove="Views\Category\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Views\Category\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotNet.DataAccess\DotNet.DataAccess.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\DotNet.Models\DotNet.Models.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\DotNet.Utility\DotNet.Utility.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>

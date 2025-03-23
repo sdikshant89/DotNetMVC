@@ -268,3 +268,9 @@
 /Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/obj/Debug/net8.0/DotNetMVC.pdb
 /Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/obj/Debug/net8.0/DotNetMVC.genruntimeconfig.cache
 /Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/obj/Debug/net8.0/ref/DotNetMVC.dll
+/Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/bin/Debug/net8.0/DotNet.DataAccess.dll
+/Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/bin/Debug/net8.0/DotNet.Models.dll
+/Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/bin/Debug/net8.0/DotNet.Utility.dll
+/Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/bin/Debug/net8.0/DotNet.DataAccess.pdb
+/Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/bin/Debug/net8.0/DotNet.Models.pdb
+/Users/dikshantsharma/Work/Github/DotNetSolution/DotNetMVC/bin/Debug/net8.0/DotNet.Utility.pdb

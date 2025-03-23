@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-namespace DotNetMVC.Models
+namespace DotNet.Models
 {
 	public class Category
     {

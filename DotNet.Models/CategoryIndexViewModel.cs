@@ -1,5 +1,5 @@
 ﻿using System;
-namespace DotNetMVC.Models
+namespace DotNet.Models
 {
 	public class CategoryIndexViewModel
 	{

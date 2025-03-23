@@ -1,8 +1,6 @@
-﻿using System;
-using System.Xml.Linq;
-using DotNetMVC.Models;
+﻿using DotNet.Models;
 using Microsoft.EntityFrameworkCore;
-namespace DotNetMVC.Data
+namespace DotNet.DataAccess.Data
 {
 	public class ApplicationDbContext : DbContext
 	{
@@ -21,6 +19,5 @@ namespace DotNetMVC.Data
 					new Category { CategoryId = 3, Name = "Kids", DisplayOrder = 3 }
 				);
         }
-
     }
 }
