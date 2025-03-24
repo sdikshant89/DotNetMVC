@@ -403,3 +403,16 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+**/obj/
+**/bin/
+*.user
+*.suo
+.vs/
+
+**/*.AssemblyInfo.cs
+**/*.AssemblyInfoInputs.cache
+**/*.csproj.AssemblyReference.cache
+**/*.sourcelink.json
+**/*.cache
+**/obj/**/*.cache
