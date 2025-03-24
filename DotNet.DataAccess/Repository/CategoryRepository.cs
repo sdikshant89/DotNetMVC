@@ -1,6 +1,8 @@
-﻿using DotNet.DataAccess.Data;
+﻿using System.Linq.Expressions;
+using DotNet.DataAccess.Data;
 using DotNet.DataAccess.Repository.IRepository;
 using DotNet.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNet.DataAccess.Repository
 {
@@ -17,13 +19,9 @@ namespace DotNet.DataAccess.Repository
             _db.Categories.Update(obj);
         }
 
-        // Unit of Work pattern - You can perform multiple operations and save them all at once
-        // Transaction control - All changes are committed together or rolled back together
-        // Performance - Batch multiple changes into a single database round-trip
-        // Returns total number of rows affected after the operation
-        public async Task<int> SaveChangesAsync()
+        public async Task<bool> AnyAsync(Expression<Func<Category, bool>> predicate)
         {
-            return await _db.SaveChangesAsync();
+            return await _db.Categories.AsNoTracking().AnyAsync(predicate);
         }
     }
 }

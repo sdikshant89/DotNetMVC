@@ -1,24 +1,23 @@
-﻿using DotNet.DataAccess.Data;
+﻿using DotNet.DataAccess.Repository.IRepository;
 using DotNet.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DotNetMVC.Controllers
 {
 
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
+        private readonly IUnitOfWork unitOfWork;
+        public CategoryController(IUnitOfWork unitWork)
         {
-            _db = db;
+            unitOfWork = unitWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var viewModel = new CategoryIndexViewModel
             {
-                Categories = _db.Categories.ToList(),
+                Categories = (await unitOfWork.Category.GetAll()).ToList(),
                 CategoryForm = new Category()
             };
             return View(viewModel);
@@ -31,14 +30,12 @@ namespace DotNetMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Check for duplicates using AsNoTracking to avoid tracking issues
-                var duplicate = await _db.Categories
-                    .AsNoTracking()
-                    .AnyAsync(c => c.Name.ToLower() == model.CategoryForm.Name.ToLower());
+                bool duplicate = await unitOfWork.Category.AnyAsync(c => c.Name.ToLower() == model.CategoryForm.Name.ToLower());
 
                 if (!duplicate)
                 {
-                    _db.Categories.Add(model.CategoryForm);
-                    await _db.SaveChangesAsync();
+                    unitOfWork.Category.Add(model.CategoryForm);
+                    await unitOfWork.SaveChangesAsync();
                     TempData["SuccessMessage"] = model.CategoryForm.Name + " Category added!";
                     return RedirectToAction("Index", "Category");
                 }
@@ -55,14 +52,14 @@ namespace DotNetMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(int? categoryId)
+        public async Task<IActionResult> Edit(int? categoryId)
         {
             if(categoryId == null || categoryId == 0)
             {
                 return NotFound();
             }
-            Category? obj = _db.Categories.Find(categoryId);
-            if(object.Equals(obj, null))
+            Category? obj = await unitOfWork.Category.Get(c => c.CategoryId == categoryId);
+            if(Equals(obj, null))
             {
                 return NotFound();
             }
@@ -76,24 +73,13 @@ namespace DotNetMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Check for duplicate name (excluding the current category)
-                var duplicate = await _db.Categories
-                    .AsNoTracking()
-                    .AnyAsync(c => c.CategoryId!=model.CategoryId && c.Name.ToLower() == model.Name.ToLower());
+                bool duplicate = await unitOfWork.Category.AnyAsync(c => c.CategoryId!=model.CategoryId && c.Name.ToLower() == model.Name.ToLower());
                 if (!duplicate)
                 {
                     try
                     {
-                        // Approach 1: Attach and mark as modified
-                        _db.Entry(model).State = EntityState.Modified;
-
-                        // Or Approach 2: Find and update
-                        // var existingCategory = await _db.Categories.FindAsync(model.Id);
-                        // if (existingCategory != null)
-                        // {
-                        //     _db.Entry(existingCategory).CurrentValues.SetValues(model);
-                        // }
-
-                        await _db.SaveChangesAsync();
+                        unitOfWork.Category.Update(model);
+                        await unitOfWork.SaveChangesAsync();
                         return RedirectToAction("Index", "Category");
                     }
                     catch (Exception ex)
@@ -116,11 +102,11 @@ namespace DotNetMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingCategory = await _db.Categories.FindAsync(model.CategoryForm.CategoryId);
+                var existingCategory = await unitOfWork.Category.Get(c => c.CategoryId == model.CategoryForm.CategoryId);
                 if (existingCategory != null)
                 {
-                    _db.Categories.Remove(existingCategory);
-                    await _db.SaveChangesAsync();
+                    unitOfWork.Category.Remove(existingCategory);
+                    await unitOfWork.SaveChangesAsync();
                     TempData["SuccessMessage"] = existingCategory.Name + " Category deleted!";
                     return RedirectToAction("Index", "Category");
                 }else

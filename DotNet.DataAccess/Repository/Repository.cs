@@ -48,6 +48,10 @@ namespace DotNet.DataAccess.Repository
             }
         }
 
+
+        // Methods below don't perform any db changes, they just stage changes to the object model
+        // So its alright to not use async await
+        // Cause after using we're anyways going to call SaveChangesAsync
         public void Add(T entity)
         {
             dbSet.Add(entity);
