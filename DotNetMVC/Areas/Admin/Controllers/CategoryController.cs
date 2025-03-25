@@ -2,9 +2,9 @@
 using DotNet.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DotNetMVC.Controllers
+namespace DotNetMVC.Areas.Admin.Controllers
 {
-
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
