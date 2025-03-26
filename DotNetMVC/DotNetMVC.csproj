@@ -24,6 +24,7 @@
     <None Remove="Areas\Admin\Views\Category\" />
     <None Remove="Areas\Customer\Views\" />
     <None Remove="Areas\Customer\Views\Home\" />
+    <None Remove="Areas\Admin\Views\Product\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\" />
@@ -34,6 +35,7 @@
     <Folder Include="Areas\Admin\Views\Category\" />
     <Folder Include="Areas\Customer\Views\" />
     <Folder Include="Areas\Customer\Views\Home\" />
+    <Folder Include="Areas\Admin\Views\Product\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNet.DataAccess\DotNet.DataAccess.csproj">
