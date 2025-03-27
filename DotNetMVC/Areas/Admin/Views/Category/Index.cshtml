@@ -27,7 +27,7 @@
                 <div class="modal-body">
                     <!-- Form to add new category -->
                     <form id="addCategoryForm" method="post" asp-controller="Category" asp-action="Add">
-                        <input asp-for="Categories" hidden />
+                        @*<input asp-for="Categories" hidden />*@
                         <div class="form-group">
                             <label asp-for="CategoryForm.Name"></label>
                             <input class="form-control" asp-for="CategoryForm.Name" />
@@ -55,7 +55,7 @@
                 <div class="modal-body">
                     <!-- Form to delete new category -->
                     <form id="deleteCategoryForm" method="post" asp-controller="Category" asp-action="Delete">
-                        <input asp-for="Categories" hidden />
+                        @*<input asp-for="Categories" hidden />*@
                         <input id="categoryId" name="CategoryForm.CategoryId" hidden />
                         <input id="categoryName" name="CategoryForm.Name" hidden />
                         <input id="categoryDisplayOrder" name="CategoryForm.DisplayOrder" hidden />
@@ -67,9 +67,9 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped table-hover">
         <thead>
-            <tr class="text-center">
+            <tr class="table-dark text-center">
                 <th>Category Type</th>
                 <th>Display Order</th>
                 <th class="w-25">Actions</th>

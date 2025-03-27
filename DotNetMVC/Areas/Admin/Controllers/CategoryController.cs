@@ -1,5 +1,6 @@
 ﻿using DotNet.DataAccess.Repository.IRepository;
 using DotNet.Models;
+using DotNet.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetMVC.Areas.Admin.Controllers

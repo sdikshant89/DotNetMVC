@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace DotNet.Models
 {
@@ -21,7 +22,15 @@ namespace DotNet.Models
 
         [Required(ErrorMessage = "Description is required")]
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
-        [MinLength(10, ErrorMessage = "Description must be at least 10 characters long")]
         public string Description { get; set; }
+
+        public int CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        [ValidateNever]
+        public Category Category { get; set; }
+
+        [ValidateNever]
+        public string? ImageUrl { get; set; }
     }
 }

@@ -20,15 +20,16 @@ namespace DotNet.DataAccess.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 			modelBuilder.Entity<Category>().HasData(
-					new Category { CategoryId= 1, Name = "Electronics", DisplayOrder = 1 },
+					new Category { CategoryId = 1, Name = "Electronics", DisplayOrder = 1 },
                     new Category { CategoryId = 2, Name = "Toys", DisplayOrder = 2 },
 					new Category { CategoryId = 3, Name = "Appliances", DisplayOrder = 3 }
 				);
 
+            // modelBuilder.Entity<Product>().Property(p => p.ImageUrl).IsRequired(false); -- using ? nullable reference type in the entity
             modelBuilder.Entity<Product>().HasData(
-                    new Product { ProductId = 1, Name = "IPad Pro", Price = 1200M, Description = "10th Gen, 13 Inch" },
-                    new Product { ProductId = 2, Name = "Fidget Spinner", Price = 15M, Description = "Stress bbye" },
-                    new Product { ProductId = 3, Name = "Refrigerator", Price = 3000M, Description = "Cooling Like never before" }
+                    new Product { ProductId = 1, Name = "IPad Pro", Price = 1200M, Description = "10th Gen, 13 Inch", CategoryId = 1 },
+                    new Product { ProductId = 2, Name = "Fidget Spinner", Price = 15M, Description = "Stress bbye", CategoryId = 2 },
+                    new Product { ProductId = 3, Name = "Refrigerator", Price = 3000M, Description = "Cooling Like never before", CategoryId = 3 }
                 );
         }
     }

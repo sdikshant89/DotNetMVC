@@ -1,6 +1,8 @@
 ﻿using DotNet.DataAccess.Repository.IRepository;
 using DotNet.Models;
+using DotNet.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DotNetMVC.Areas.Admin.Controllers
 {
@@ -14,11 +16,16 @@ namespace DotNetMVC.Areas.Admin.Controllers
         }
 
         public async Task<IActionResult> Index()
-        {
+        { 
             var viewModel = new ProductIndexViewModel
             {
                 Products = (await unitOfWork.Product.GetAll()).ToList(),
-                ProductForm = new Product()
+                ProductForm = new Product(),
+                CategoryList = (await unitOfWork.Category.GetAll()).Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.CategoryId.ToString()
+                })
             };
             return View(viewModel);
         }
@@ -96,11 +103,11 @@ namespace DotNetMVC.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(ProductIndexViewModel model)
+        public async Task<IActionResult> Delete(int productId)
         {
             if (ModelState.IsValid)
             {
-                var existingProduct = await unitOfWork.Product.Get(c => c.ProductId == model.ProductForm.ProductId);
+                var existingProduct = await unitOfWork.Product.Get(c => c.ProductId == productId);
                 if (existingProduct != null)
                 {
                     unitOfWork.Product.Remove(existingProduct);
