@@ -32,7 +32,7 @@ namespace DotNetMVC.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(ProductIndexViewModel model)
+        public async Task<IActionResult> Add(ProductIndexViewModel model, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -75,7 +75,7 @@ namespace DotNetMVC.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Product model)
+        public async Task<IActionResult> Edit(Product model, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
