@@ -409,6 +409,7 @@ ASALocalRun/
 *.user
 *.suo
 */.vs/
+*/bin/
 
 **/*.AssemblyInfo.cs
 **/*.AssemblyInfoInputs.cache
