@@ -10,9 +10,11 @@ namespace DotNetMVC.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
-        public ProductController(IUnitOfWork unitWork)
+        private readonly IWebHostEnvironment webHostEnvironment;
+        public ProductController(IUnitOfWork unitWork, IWebHostEnvironment webEnv)
         {
             unitOfWork = unitWork;
+            webHostEnvironment = webEnv;
         }
 
         public async Task<IActionResult> Index()
@@ -41,6 +43,17 @@ namespace DotNetMVC.Areas.Admin.Controllers
 
                 if (!duplicate)
                 {
+                    string wwwRootPath = webHostEnvironment.WebRootPath;
+                    if (imageFile != null)
+                    {
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                        string productImagePath = Path.Combine(wwwRootPath, @"images/Products");
+                        using (var fileStream = new FileStream(Path.Combine(productImagePath, fileName), FileMode.Create))
+                        {
+                            imageFile.CopyTo(fileStream);
+                        }
+                        model.ProductForm.ImageUrl = @"\images\Products\" + fileName;
+                    }
                     unitOfWork.Product.Add(model.ProductForm);
                     await unitOfWork.SaveChangesAsync();
                     TempData["SuccessMessage"] = model.ProductForm.Name + " Product Successfully added!";

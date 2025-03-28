@@ -20,7 +20,6 @@
   <ItemGroup>
     <None Remove="Areas\Admin\" />
     <None Remove="Areas\Customer\" />
-    <None Remove="Controllers\" />
     <None Remove="Areas\Admin\Views\Category\" />
     <None Remove="Areas\Customer\Views\" />
     <None Remove="Areas\Customer\Views\Home\" />
@@ -31,11 +30,12 @@
     <Folder Include="Areas\Admin\" />
     <Folder Include="Areas\Customer\" />
     <Folder Include="Areas\Customer\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Areas\Admin\Views\Category\" />
     <Folder Include="Areas\Customer\Views\" />
     <Folder Include="Areas\Customer\Views\Home\" />
     <Folder Include="Areas\Admin\Views\Product\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\images\Products\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNet.DataAccess\DotNet.DataAccess.csproj">
@@ -47,5 +47,9 @@
     <ProjectReference Include="..\DotNet.Utility\DotNet.Utility.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\images\" />
+    <Content Remove="wwwroot\images\Products\" />
   </ItemGroup>
 </Project>
