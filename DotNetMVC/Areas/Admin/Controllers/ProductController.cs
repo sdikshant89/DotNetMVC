@@ -83,21 +83,30 @@ namespace DotNetMVC.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View(obj);
+            var vm = new ProductIndexViewModel
+            {
+                ProductForm = obj,
+                CategoryList = (await unitOfWork.Category.GetAll()).Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.CategoryId.ToString()
+                })
+            };
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Product model, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(ProductIndexViewModel model, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
-                bool duplicate = await unitOfWork.Product.AnyAsync(c => c.ProductId!=model.ProductId && c.Name.ToLower() == model.Name.ToLower());
+                bool duplicate = await unitOfWork.Product.AnyAsync(c => c.ProductId!=model.ProductForm.ProductId && c.Name.ToLower() == model.ProductForm.Name.ToLower());
                 if (!duplicate)
                 {
                     try
                     {
-                        unitOfWork.Product.Update(model);
+                        unitOfWork.Product.Update(model.ProductForm);
                         await unitOfWork.SaveChangesAsync();
                         return RedirectToAction("Index", "Product");
                     }

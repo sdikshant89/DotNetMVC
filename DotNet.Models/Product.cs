@@ -31,6 +31,7 @@ namespace DotNet.Models
         public Category Category { get; set; }
 
         [ValidateNever]
+        [DisplayName("Product Image File")]
         public string? ImageUrl { get; set; }
     }
 }

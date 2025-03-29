@@ -411,6 +411,8 @@ ASALocalRun/
 */.vs/
 */bin/
 
+**/images/Products/
+
 **/*.AssemblyInfo.cs
 **/*.AssemblyInfoInputs.cache
 **/*.csproj.AssemblyReference.cache
