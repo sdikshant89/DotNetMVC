@@ -10,11 +10,11 @@ namespace DotNetMVC.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IWebHostEnvironment webHostEnvironment;
-        public ProductController(IUnitOfWork unitWork, IWebHostEnvironment webEnv)
+        private readonly IWebHostEnvironment webEnv;
+        public ProductController(IUnitOfWork unitWork, IWebHostEnvironment webHostEnvironment)
         {
             unitOfWork = unitWork;
-            webHostEnvironment = webEnv;
+            webEnv = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -43,16 +43,10 @@ namespace DotNetMVC.Areas.Admin.Controllers
 
                 if (!duplicate)
                 {
-                    string wwwRootPath = webHostEnvironment.WebRootPath;
+                    string wwwRootPath = webEnv.WebRootPath;
                     if (imageFile != null)
                     {
-                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                        string productImagePath = Path.Combine(wwwRootPath, @"images/Products");
-                        using (var fileStream = new FileStream(Path.Combine(productImagePath, fileName), FileMode.Create))
-                        {
-                            imageFile.CopyTo(fileStream);
-                        }
-                        model.ProductForm.ImageUrl = @"\images\Products\" + fileName;
+                        model.ProductForm.ImageUrl = saveImageAndReturnPath(imageFile);
                     }
                     unitOfWork.Product.Add(model.ProductForm);
                     await unitOfWork.SaveChangesAsync();
@@ -106,6 +100,19 @@ namespace DotNetMVC.Areas.Admin.Controllers
                 {
                     try
                     {
+                        if (imageFile != null)
+                        {
+                            if (!string.IsNullOrEmpty(model.ProductForm.ImageUrl))
+                            {
+                                // Delete the previous image
+                                var oldImagePath = Path.Combine(webEnv.WebRootPath, model.ProductForm.ImageUrl.Replace("\\", "/").TrimStart('/'));
+                                if (System.IO.File.Exists(oldImagePath))
+                                {
+                                    System.IO.File.Delete(oldImagePath);
+                                }
+                            }    
+                            model.ProductForm.ImageUrl = saveImageAndReturnPath(imageFile);
+                        }
                         unitOfWork.Product.Update(model.ProductForm);
                         await unitOfWork.SaveChangesAsync();
                         return RedirectToAction("Index", "Product");
@@ -142,6 +149,18 @@ namespace DotNetMVC.Areas.Admin.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+
+        public string saveImageAndReturnPath(IFormFile imageFile)
+        {
+            string wwwRootPath = webEnv.WebRootPath;
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+            string productImagePath = Path.Combine(wwwRootPath, @"images/Products");
+            using (var fileStream = new FileStream(Path.Combine(productImagePath, fileName), FileMode.Create))
+            {
+                imageFile.CopyTo(fileStream);
+            }
+            return @"\images\Products\" + fileName;
         }
     }
 }
