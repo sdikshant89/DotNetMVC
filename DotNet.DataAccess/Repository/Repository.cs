@@ -18,11 +18,19 @@ namespace DotNet.DataAccess.Repository
             this.dbSet = _db.Set<T>();
 		}
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll(string? includeProperties = null)
         {
+            // Include properties would be the name of nested objects to be included, case sensitive
             IQueryable<T> query = dbSet;
             try
             {
+                if (!string.IsNullOrEmpty(includeProperties))
+                {
+                    foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        query = query.Include(includeProp);
+                    }
+                }
                 return await query.ToListAsync();
             }
             catch (InvalidOperationException ex)
@@ -31,12 +39,19 @@ namespace DotNet.DataAccess.Repository
             }
         }
 
-        public async Task<T> Get(Expression<Func<T, bool>> filter)
+        public async Task<T> Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
             try
             {
+                if (!string.IsNullOrEmpty(includeProperties))
+                {
+                    foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        query = query.Include(includeProp);
+                    }
+                }
                 return await query.FirstAsync();
             }
             catch (InvalidOperationException ex)

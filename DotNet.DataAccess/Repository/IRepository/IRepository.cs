@@ -8,8 +8,8 @@ namespace DotNet.DataAccess.Repository.IRepository
         // T - any generic model class
 
         // Fetch Methods
-        Task<IEnumerable<T>> GetAll();
-        Task<T> Get(Expression<Func<T, bool>> filter);
+        Task<IEnumerable<T>> GetAll(string? includeProperties = null);
+        Task<T> Get(Expression<Func<T, bool>> filter, string? includeProperties = null);
 
 		// Addition
 		void Add(T entity);

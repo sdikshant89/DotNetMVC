@@ -21,7 +21,7 @@ namespace DotNetMVC.Areas.Admin.Controllers
         { 
             var viewModel = new ProductIndexViewModel
             {
-                Products = (await unitOfWork.Product.GetAll()).ToList(),
+                Products = (await unitOfWork.Product.GetAll(includeProperties:"Category")).ToList(),
                 ProductForm = new Product(),
                 CategoryList = (await unitOfWork.Category.GetAll()).Select(u => new SelectListItem
                 {
@@ -162,6 +162,17 @@ namespace DotNetMVC.Areas.Admin.Controllers
             }
             return @"\images\Products\" + fileName;
         }
+
+        #region API CALLS
+
+        [HttpGet]
+        public async Task<IActionResult> getAll(int id)
+        {
+            List<Product> Products = (await unitOfWork.Product.GetAll(includeProperties: "Category")).ToList();
+            return Json(new { data = Products });
+        }
+
+        #endregion
     }
 }
 
