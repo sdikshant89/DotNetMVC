@@ -52,7 +52,7 @@
                         </div>
                         <div class="form-group mt-2">
                             <label name="imageFile" asp-for="ProductForm.ImageUrl"></label>
-                            <input type="file" name="imageFile" class="form-control" asp-for="ProductForm.ImageUrl"/>
+                            <input type="file" name="imageFile" class="form-control" asp-for="ProductForm.ImageUrl" />
                         </div>
                         <button type="submit" class="mt-3 btn btn-primary rounded-pill">Add</button>
                     </form>
@@ -121,7 +121,19 @@
         </div>
     </div>
 
-    <table class="table table-bordered table-striped table-hover">
+    <table id="myTable" class="table table-bordered table-striped table-hover hidden">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+
+
+    <table class="table table-bordered table-striped table-hover d-none">
         <thead>
             <tr class="table-dark text-center">
                 <th>Product Name</th>
@@ -168,6 +180,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/product.js"></script>
     <script>
 
         function prepareDeleteModal(productId, productName) {
@@ -176,6 +189,8 @@
         }
 
         function prepareInfo(productId, name, price, description, imageUrl, categoryName) {
+            console.log("imageURL inside the function");
+            console.log(imageUrl);
             document.getElementById('headerProductName').textContent = name;
             document.getElementById('infoproductId').textContent = productId;
             document.getElementById('infoproductPrice').textContent = price;
