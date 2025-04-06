@@ -12,8 +12,6 @@ function loadDataTable() {
             {
                 data: 'productId',
                 "render": function (data, type, row) {
-                    console.log("imageURLs");
-                    console.log(row.imageUrl);
                     const imageUrl = row.imageUrl ? encodeURIComponent(row.imageUrl) : "";
                     return `
                     <div class="btn-group" role="group">

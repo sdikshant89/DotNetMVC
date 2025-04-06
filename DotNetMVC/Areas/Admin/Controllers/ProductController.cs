@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DotNetMVC.Areas.Admin.Controllers
 {
+    //Todo check the proper way to rollback and add try catch
     [Area("Admin")]
     public class ProductController : Controller
     {
@@ -44,6 +45,7 @@ namespace DotNetMVC.Areas.Admin.Controllers
                 if (!duplicate)
                 {
                     string wwwRootPath = webEnv.WebRootPath;
+                    //Todo check api to upload to cloudinary and fetch data from there
                     if (imageFile != null)
                     {
                         model.ProductForm.ImageUrl = saveImageAndReturnPath(imageFile);
@@ -134,18 +136,37 @@ namespace DotNetMVC.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int productId)
         {
+            //Todo use sweet alerts in js to change the alert
             if (ModelState.IsValid)
             {
-                var existingProduct = await unitOfWork.Product.Get(c => c.ProductId == productId);
-                if (existingProduct != null)
+                try
                 {
-                    unitOfWork.Product.Remove(existingProduct);
-                    await unitOfWork.SaveChangesAsync();
-                    TempData["SuccessMessage"] = existingProduct.Name + " Product deleted!";
-                    return RedirectToAction("Index", "Product");
-                }else
+                    var existingProduct = await unitOfWork.Product.Get(c => c.ProductId == productId);
+                    if (existingProduct != null)
+                    {
+                        unitOfWork.Product.Remove(existingProduct);
+                        // Delete the image if exists
+                        if (!string.IsNullOrEmpty(existingProduct.ImageUrl))
+                        {
+                            var imagePath = Path.Combine(webEnv.WebRootPath, existingProduct.ImageUrl.Replace("\\", "/").TrimStart('/'));
+                            if (System.IO.File.Exists(imagePath))
+                            {
+                                System.IO.File.Delete(imagePath);
+                            }
+                        }
+                        await unitOfWork.SaveChangesAsync();
+                        TempData["SuccessMessage"] = existingProduct.Name + " Product deleted!";
+                        return RedirectToAction("Index", "Product");
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Couldn't find record to delete";
+                    }
+                } catch(Exception e)
                 {
-                    TempData["ErrorMessage"] = "Couldn't find record to delete";
+                    //Todo remove console log and handle exception properly -- add logging
+                    Console.WriteLine(e);
+                    TempData["ErrorMessage"] = "Error Occured while deleting the product record";
                 }
             }
             return RedirectToAction("Index");
