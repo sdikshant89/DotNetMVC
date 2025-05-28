@@ -26,7 +26,13 @@ namespace DotNetMVC.Areas.Customer.Controllers;
             return View(productList);
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Details(int id)
+        {
+            Product product = await unitOfWork.Product.Get(u=> u.ProductId==id , includeProperties: "Category");
+            return View(product);
+        }
+
+    public IActionResult Privacy()
         {
             return View();
         }
