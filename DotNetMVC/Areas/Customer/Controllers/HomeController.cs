@@ -32,7 +32,7 @@ namespace DotNetMVC.Areas.Customer.Controllers;
             return View(product);
         }
 
-    public IActionResult Privacy()
+        public IActionResult Privacy()
         {
             return View();
         }

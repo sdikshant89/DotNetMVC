@@ -6,9 +6,11 @@ function loadDataTable() {
     var datatable = $('#myTable').DataTable({
         "ajax": { url:'/Admin/Product/getAll'},
         "columns": [
-            { data: 'name', width: '10%' },
-            { data: 'price', width: '10%' },
-            { data: 'category.name', width: '10%' },
+            { data: 'name' },
+            { data: 'brand'},
+            { data: 'price'},
+            { data: 'category.name' },
+            { data: 'rating'},
             {
                 data: 'productId',
                 "render": function (data, type, row) {
@@ -34,7 +36,7 @@ function loadDataTable() {
                         </div>
                     `;
                 },
-                width: '15%'
+                width: '40%'
             }
         ]
     });
