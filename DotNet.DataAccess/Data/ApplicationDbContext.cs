@@ -1,8 +1,10 @@
 ﻿using DotNet.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 namespace DotNet.DataAccess.Data
 {
-	public class ApplicationDbContext : DbContext
+	public class ApplicationDbContext : IdentityDbContext
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 		{}
@@ -17,6 +19,7 @@ namespace DotNet.DataAccess.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<Category>().HasData(
 					new Category { CategoryId = 1, Name = "Electronics", DisplayOrder = 1 },
                     new Category { CategoryId = 2, Name = "Toys", DisplayOrder = 2 },
