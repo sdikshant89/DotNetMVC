@@ -80,46 +80,53 @@
     </div>
 
     <div class="modal fade" id="infoProductModal" tabindex="-1" aria-labelledby="infoProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Product Info</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="infoProductModalLabel">Product Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body mx-0">
-                    <div class="row d-flex align-items-start justify-content-evenly">
-                        <div class="col-6 d-flex justify-content-center">
-                            <div id="infoproductId" hidden></div>
-                            <img id="infoproductImage" class="img-fluid mt-2 w-85 h-75" alt="Product Image" />
+                <div class="modal-body px-4 py-3">
+                    <div class="row">
+                        <!-- Image and Placeholder -->
+                        <div class="col-md-5 d-flex align-items-center justify-content-center">
+                            <div class="position-relative w-100">
+                                <img id="infoproductImage" class="img-fluid rounded shadow-sm w-100 fixed-image-size" alt="Product Image"
+                                     onerror="this.style.display='none'; document.getElementById('imagePlaceholder').classList.remove('d-none');" />
+                                <div id="imagePlaceholder" class="image-placeholder d-none text-center text-muted border rounded py-4">
+                                    <i class="bi bi-image fs-1 mb-2"></i>
+                                    <div class="fw-bold">No Image Available</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <h3 id="headerProductName"></h3>
-                            <h3 class="fst-italic fw-bolder">
-                                $<span id="infoproductPrice"></span>/-
-                            </h3>
-                            <h4 class="mt-4">Details:</h4>
-                            <div id="infoproductDes"></div>
-                            <span class="badge rounded-pill bg-warning mt-2" id="infoProductCategory"></span>
-                        </div>
-                        <div class="d-flex justify-content-end align-items-center mt-3 mr-3 gap-2">
-                            <!-- Edit Button -->
-                            <a id="infoProductEditButton" class="btn btn-info rounded-pill"
-                               asp-controller="Product"
-                               asp-action="Edit">
-                                <i class="bi bi-pencil-fill"></i> Edit
-                            </a>
 
-                            <!-- Close Button -->
-                            <button type="button" class="btn btn-danger rounded-pill"
-                                    data-bs-dismiss="modal">
-                                <i class="bi bi-x-circle"></i> Close
-                            </button>
+                        <!-- Product Details -->
+                        <div class="col-md-7">
+                            <h4 class="fw-bold" id="headerProductName">Product Name</h4>
+                            <p class="fs-5 text-success fw-semibold mb-1">$<span id="infoproductPrice">0.00</span>/-</p>
+                            <div class="mb-3">
+                                <span class="badge rounded-pill bg-warning text-dark" id="infoProductCategory">Category</span>
+                            </div>
+
+                            <h5 class="mt-4">Description:</h5>
+                            <p class="text-muted" id="infoproductDes">No description available.</p>
+
+                            <div id="infoproductId" hidden></div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                    <a id="infoProductEditButton" class="btn btn-outline-primary rounded-pill" asp-controller="Product" asp-action="Edit">
+                        <i class="bi bi-pencil-fill"></i> Edit
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Close
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <table id="myTable" class="table table-bordered table-striped table-hover">
         <thead>
@@ -137,49 +144,66 @@
 
     @*old implementation not in use*@
     @*<table class="table table-bordered table-striped table-hover d-none">
-        <thead>
-            <tr class="table-dark text-center">
-                <th>Product Name</th>
-                <th>Product Price</th>
-                <th>Category</th>
-                <th class="w-50">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var obj in Model.Products.OrderBy(u => u.ProductId))
-            {
-                var imageUrl = obj.ImageUrl == null ? "" : obj.ImageUrl.Replace("\\", "/");
-                <tr class="text-center">
-                    <td>@obj.Name</td>
-                    <td>@obj.Price</td>
-                    <td>@obj.Category.Name</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <a class="btn btn-success btn-md mx-2 rounded-pill"
-                               asp-controller="Product"
-                               asp-action="Edit"
-                               asp-route-productId="@obj.ProductId" >
-                                <i class="bi bi-pencil-fill"></i> Edit
-                            </a>
-                            <a class="btn btn-danger btn-md mx-2 rounded-pill"
-                               onclick="prepareDeleteModal(@obj.ProductId, '@obj.Name')"
-                               data-bs-toggle="modal"
-                               data-bs-target="#deleteProductModal">
-                                <i class="bi bi-trash3-fill"></i> Delete
-                            </a>
-                            <a class="btn btn-info btn-md mx-2 rounded-pill"
-                               onclick="prepareInfo(@obj.ProductId, '@obj.Name', @obj.Price, '@obj.Description', '@imageUrl', '@obj.Category.Name')"
-                               data-bs-toggle="modal"
-                               data-bs-target="#infoProductModal">
-                                <i class="bi bi-arrows-angle-expand"></i> More info
-                            </a>
-                        </div>
-                    </td>
+            <thead>
+                <tr class="table-dark text-center">
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Category</th>
+                    <th class="w-50">Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>*@
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.Products.OrderBy(u => u.ProductId))
+                {
+                    var imageUrl = obj.ImageUrl == null ? "" : obj.ImageUrl.Replace("\\", "/");
+                    <tr class="text-center">
+                        <td>@obj.Name</td>
+                        <td>@obj.Price</td>
+                        <td>@obj.Category.Name</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-success btn-md mx-2 rounded-pill"
+                                   asp-controller="Product"
+                                   asp-action="Edit"
+                                   asp-route-productId="@obj.ProductId" >
+                                    <i class="bi bi-pencil-fill"></i> Edit
+                                </a>
+                                <a class="btn btn-danger btn-md mx-2 rounded-pill"
+                                   onclick="prepareDeleteModal(@obj.ProductId, '@obj.Name')"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#deleteProductModal">
+                                    <i class="bi bi-trash3-fill"></i> Delete
+                                </a>
+                                <a class="btn btn-info btn-md mx-2 rounded-pill"
+                                   onclick="prepareInfo(@obj.ProductId, '@obj.Name', @obj.Price, '@obj.Description', '@imageUrl', '@obj.Category.Name')"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#infoProductModal">
+                                    <i class="bi bi-arrows-angle-expand"></i> More info
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>*@
 </div>
+
+<style>
+    .fixed-image-size {
+        max-height: 300px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .image-placeholder {
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border: 2px dashed #ced4da;
+    }
+</style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -192,18 +216,23 @@
         }
 
         function prepareInfo(productId, name, price, description, imageUrl, categoryName) {
-            document.getElementById('headerProductName').textContent = name;
+            document.getElementById('headerProductName').textContent = name || "Unnamed Product";
             document.getElementById('infoproductId').textContent = productId;
-            document.getElementById('infoproductPrice').textContent = price;
-            document.getElementById('infoproductDes').textContent = description;
-            document.getElementById('infoProductCategory').textContent = categoryName;
+            document.getElementById('infoproductPrice').textContent = price?.toFixed(2) || "0.00";
+            document.getElementById('infoproductDes').textContent = description || "No description available.";
+            document.getElementById('infoProductCategory').textContent = categoryName || "Uncategorized";
+
             const imgElement = document.getElementById('infoproductImage');
+            const placeholder = document.getElementById('imagePlaceholder');
             if (imgElement) {
-                imgElement.src = imageUrl || '/path/to/default-image.jpg';
+                imgElement.src = imageUrl || '/images/default-placeholder.png';
+                imgElement.style.display = 'block';
+                placeholder.classList.add('d-none');
             }
+
             const editButton = document.getElementById('infoProductEditButton');
             if (editButton) {
-                editButton.href = `Product/Edit?productId=${productId}`;
+                editButton.href = `/Admin/Product/Edit?productId=${productId}`;
             }
         }
     </script>

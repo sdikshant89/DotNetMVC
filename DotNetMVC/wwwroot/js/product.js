@@ -2,6 +2,10 @@
     loadDataTable();
 });
 
+function escapeHtml(text) {
+    return text?.replace(/'/g, "\\'").replace(/"/g, '&quot;') || '';
+}
+
 function loadDataTable() {
     var datatable = $('#myTable').DataTable({
         "ajax": { url:'/Admin/Product/getAll'},
@@ -28,7 +32,14 @@ function loadDataTable() {
                                 <i class="bi bi-trash3-fill"></i> Delete
                             </a>
                             <a class="btn btn-info btn-md mx-2 rounded-pill"
-                               onclick="prepareInfo(${data}, '${row.name}', ${row.price}, '${row.description || ""}', decodeURIComponent('${imageUrl}'), '${row.category ? row.category.name : ""}')"
+                               onclick="prepareInfo(
+                                    ${data},
+                                    '${escapeHtml(row.name)}',
+                                    ${row.price},
+                                    '${escapeHtml(row.description || "")}',
+                                    decodeURIComponent('${imageUrl}'),
+                                    '${escapeHtml(row.category?.name || "")}'
+                                )"
                                data-bs-toggle="modal"
                                data-bs-target="#infoProductModal">
                                 <i class="bi bi-arrows-angle-expand"></i> More info

@@ -1,47 +1,294 @@
 ﻿@model Product
 
-<form method="post">
-    <input hidden asp-for="ProductId" />
-    <div class="card  container pt-4">
-        <div class="card-header bg-primary text-light ml-0  row ">
-            <div class="col-12 col-md-6">
-                <h1 class="text-white-50">@Model.Name</h1>
-            </div>
-            <div class="col-12 col-md-6 text-end pt-4">
-                <span class="badge bg-info pt-2" style="height:30px;">@Model.Name</span>
-                <span class="badge bg-warning pt-2" style="height:30px;">@Model.Category.Name</span>
-            </div>
-        </div>
-        <div class="card-body row container">
-            <div class="container rounded p-2">
-                <div class="row">
-                    <div class="col-8 col-lg-8">
-                        <div class="row pl-2">
-                            <h5 class="text-muted pb-2">List Price: <strike>@Model.Price</strike></h5>
-                        </div>
-                        <div class="row pl-2">
-                            <p class="text-secondary">@Html.Raw(Model.Description)</p>
-                        </div>
-                        <div class="row pl-2">
-                            <div class="col-2 text-primary"><h4>Count</h4></div>
-                            @*<div class="col-10"><input asp-for="Count" class="form-control" /></div>*@
+<div class="container-fluid py-4 bg-light min-vh-100">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-white rounded shadow-lg px-3 py-2 mb-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index")" class="text-decoration-none text-primary">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#" class="text-decoration-none text-primary">@Model.Category.Name</a>
+                </li>
+                <li class="breadcrumb-item active text-muted" aria-current="page">@Model.Name</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4 mb-4">
+            <!-- Product Image & Description -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-lg mb-4">
+                    <div class="product-image-container position-relative rounded overflow-hidden">
+                        @{
+                            var tempUrl = Model.ImageUrl;
+                            var imageUrl = string.IsNullOrEmpty(tempUrl) ? "" : tempUrl.Replace("\\", "/");
+                        }
+
+                        @if (!string.IsNullOrEmpty(imageUrl))
+                        {
+                            <img id="productImage"
+                                 src="@imageUrl"
+                                 class="img-fluid w-100 h-100 object-fit-cover"
+                                 alt="@Model.Name"
+                                 onerror="showImagePlaceholder()" />
+                        }
+
+                        <div id="imagePlaceholder"
+                             class="image-placeholder rounded d-flex align-items-center justify-content-center @(string.IsNullOrEmpty(imageUrl) ? "" : "d-none")">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-image display-1 mb-3 opacity-50"></i>
+                                <h5 class="fw-bold">No Image Available</h5>
+                                <p class="mb-0">Product image will be displayed here</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-12 col-lg-3 offset-lg-1 text-center">
-                        <img src="@Model.ImageUrl" width="100%" class="rounded" />
+                </div>
+
+                <!-- Product Description -->
+                <div class="card border-0 shadow-lg rounded">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Product Description</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted lh-lg mb-0">@Html.Raw(Model.Description)</p>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <div class="row">
-                <div class="col-12 col-md-6 pb-1">
-                    <a class="btn btn-success form-control " style="height:50px;" asp-action="Index">Back to Home</a>
-                </div>
-                <div class="col-12 col-md-6 pb-1">
-                    <button type="submit" value="Add to Cart" class="btn btn-primary form-control" style="height:50px;">Add to Cart</button>
+
+            <!-- Product Details -->
+            <div class="col-lg-6">
+                <div class="product-details h-100">
+                    <!-- Product Title, Brand & Category -->
+                    <div class="card border-0 shadow-lg mb-4 rounded">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h1 class="product-title text-dark mb-2">@Model.Name</h1>
+                                    <div class="brand-category mb-3">
+                                        <span class="badge custom-pill blue-pill">@Model.Brand</span>
+                                        <span class="badge custom-pill green-pill">@Model.Category.Name</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-md wishlist-btn" onclick="toggleWishlist(this)">
+                                    <i class="bi bi-heart-fill"></i>
+                                </button>
+                            </div>
+
+                            <!-- Ratings -->
+                            <div class="rating-section mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="stars me-3">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= Math.Floor(Model.Rating))
+                                            {
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            }
+                                            else if ((decimal)(i - 0.5) <= Model.Rating)
+                                            {
+                                                <i class="bi bi-star-half text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="rating-info">
+                                        <span class="fw-bold text-dark me-2 fs-5">@Model.Rating.ToString("0.0")</span>
+                                        <span class="text-muted">(@Model.RatingNos.ToString("N0") reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Price + Stock -->
+                            <div class="bg-success bg-opacity-10 border border-success border-opacity-25 rounded p-3 mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="display-6 fw-bold text-success">$@Model.Price.ToString("N2")</span>
+                                        <div>
+                                            <small class="text-success">
+                                                <i class="fas fa-shipping-fast me-1"></i>Free shipping
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-success text-white text-lg px-3 py-2 rounded-pill">
+                                        <i class="bi bi-bag-check-fill me-1"></i>In Stock
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row text-center g-3">
+                                <div class="col-4">
+                                    <i class="fas fa-truck text-primary fs-3 mb-2"></i>
+                                    <div class="fw-bold small">Free Shipping</div>
+                                    <small class="text-muted">On orders over $50</small>
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-undo-alt text-primary fs-3 mb-2"></i>
+                                    <div class="fw-bold small">Easy Returns</div>
+                                    <small class="text-muted">30-day policy</small>
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-shield-alt text-primary fs-3 mb-2"></i>
+                                    <div class="fw-bold small">2 Year Warranty</div>
+                                    <small class="text-muted">Full coverage</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purchase Form -->
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body">
+                            <form method="post">
+                                <input type="hidden" asp-for="ProductId" />
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark mb-3"><i class="fas fa-shopping-basket me-2"></i>Quantity:</label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="input-group" style="max-width: 250px;">
+                                            <button class="btn btn-outline-primary rounded mr-2" type="button" onclick="decreaseQuantity()">
+                                                <i class="bi bi-dash-lg"></i>
+                                            </button>
+                                            <input type="number" name="quantity" id="quantity" class="form-control text-center fw-bold" value="1" min="1" max="99">
+                                            <button class="btn btn-outline-primary rounded ml-2" type="button" onclick="increaseQuantity()">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                        <div class="d-grid w-max">
+                                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold rounded">
+                                                <i class="bi bi-bag-check-fill me-1"></i>Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                                <div class="d-grid">
+                                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary rounded">
+                                        <i class="bi bi-backspace-fill me-1"></i>Continue Shopping
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Trust Signals -->
+                    <div class="card border-0 bg-light mt-4">
+                        <div class="card-body">
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-</form>
+</div>
+
+<style>
+    .custom-pill {
+        border-radius: 50rem;
+        padding: 0.6em 1em;
+        font-size: 1rem;
+        border: 2px solid;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .blue-pill {
+        background-color: #e0f0ff;
+        color: #004085;
+        border-color: #004085;
+    }
+
+    .green-pill {
+        background-color: #e6f4ea;
+        color: #155724;
+        border-color: #155724;
+    }
+
+    .product-image-container {
+        width: 100%;
+        height: 500px;
+    }
+
+    .image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 2px dashed #dee2e6;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .product-title {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .wishlist-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .wishlist-btn:hover,
+        .wishlist-btn.active {
+            background-color: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+    .quantity-input-group .btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .quantity-input-group input {
+        height: 45px;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        border: none;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+        }
+</style>
+
+<script>function increaseQuantity() {
+        const input = document.getElementById('quantity');
+        let val = parseInt(input.value);
+        if (val < 99) input.value = val + 1;
+    }
+
+    function decreaseQuantity() {
+        const input = document.getElementById('quantity');
+        let val = parseInt(input.value);
+        if (val > 1) input.value = val - 1;
+    }
+
+    function showImagePlaceholder() {
+        document.getElementById('productImage').style.display = 'none';
+        document.getElementById('imagePlaceholder').classList.remove('d-none');
+    }
+
+    function toggleWishlist(button) {
+        button.classList.toggle('active');
+        const icon = button.querySelector('i');
+        icon.classList.toggle('far');
+        icon.classList.toggle('fas');
+    }</script>

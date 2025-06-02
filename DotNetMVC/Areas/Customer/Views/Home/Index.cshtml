@@ -1,34 +1,297 @@
 ﻿@model IEnumerable<Product>
 
-<div class="row pb-3">
-    @foreach(var product in Model)
-    {
-            <div class="col-lg-3 col-sm-6">
-                <div class="row p-2">
-                    <div class="col-12 p-1">
-                        <div class="card border-0 p-3 shadow border-top border-5 rounded">
+<div class="products-page-container flex-grow-1 d-flex flex-column">
+    <div class="container-fluid px-4 py-3">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-4 fw-bold text-primary">Our Products</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable products grid -->
+    <div class="products-scroll-container flex-grow-1">
+        <div class="container px-4">
+            <div class="row justify-content-center pb-4">
+                @foreach (var product in Model)
+                {
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4" style="max-width: 320px;">
+                        <div class="product-card h-100 shadow-sm border-0 rounded-3 overflow-hidden position-relative">
                             <a class="text-decoration-none" asp-action="Details" asp-route-id="@product.ProductId">
-                                <img src="@product.ImageUrl" class="card-img-top rounded" />
-                                <div class="card-body pb-0">
-                                    <div class="pl-1">
-                                        <p class="card-title h5 text-dark opacity-75 text-uppercase text-center"><b>@product.Name</b></p>
-                                        <p class="card-title text-warning text-center">
-                                            <span>
-                                                Price:
-                                            </span>
-                                            <b>
-                                                $ @product.Price
-                                            </b>
+                                <div class="product-image-container position-relative">
+                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                    {
+                                        <img src="@product.ImageUrl"
+                                             class="product-image w-100"
+                                             alt="@product.Name"
+                                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('d-none');" />
+                                        <div class="image-placeholder d-none">
+                                            <div class="text-center text-muted">
+                                                <i class="bi bi-image fs-1 mb-2"></i>
+                                                <div class="fw-bold">No Image</div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="image-placeholder">
+                                            <div class="text-center text-muted">
+                                                <i class="bi bi-image fs-1 mb-2"></i>
+                                                <div class="fw-bold">No Image</div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <div class="price-badge position-absolute top-0 end-0 m-2">
+                                        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+                                            $@product.Price.ToString("F2")
+                                        </span>
+                                    </div>
+
+                                    <div class="category-badge position-absolute top-0 start-0 m-2">
+                                        <span class="badge bg-secondary text-black px-2 py-1 rounded">
+                                            @product.Category.Name
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="card-body p-3 d-flex flex-column">
+                                    <h5 class="product-title text-dark mb-2 fw-bold text-center">
+                                        @product.Name
+                                    </h5>
+                                    <div class="text-center mb-2">
+                                        <small class="text-muted">by</small>
+                                        <span class="brand-name text-primary fw-semibold">@product.Brand</span>
+                                    </div>
+                                    <div class="rating-container text-center mb-2">
+                                        <div class="stars mb-1">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= Math.Floor(product.Rating))
+                                                {
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                }
+                                                else if (i <= product.Rating)
+                                                {
+                                                    <i class="bi bi-star-half text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-star text-muted"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <small class="text-muted">
+                                            @product.Rating.ToString("F1") (@product.RatingNos reviews)
+                                        </small>
+                                    </div>
+
+                                    <div class="product-description flex-grow-1 mb-1">
+                                        <p class="text-muted small text-center mb-0 description-text">
+                                            @(product.Description.Length > 100 ?
+                                      product.Description.Substring(0, 100) + "..." :
+                                      product.Description)
                                         </p>
                                     </div>
-                                    <div class="pl-1">
-                                        <p class="text-dark text-opacity-50 text-center"><b>@product.Description</b></p>
+
+                                    <div class="text-center mt-auto">
+                                        <div class="btn btn-outline-primary btn-sm px-4 py-2 rounded-pill hover-effect">
+                                            <i class="bi bi-eye me-1"></i>
+                                            View Details
+                                        </div>
                                     </div>
                                 </div>
                             </a>
                         </div>
                     </div>
-                </div>
+                }
             </div>
-    }
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Products page layout */
+    .products-page-container {
+        background: #f8f9fa;
+    }
+
+    .products-scroll-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #f8f9fa;
+    }
+
+        /* Custom scrollbar styling */
+        .products-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .products-scroll-container::-webkit-scrollbar-track {
+            background: rgba(241, 241, 241, 0.5);
+            border-radius: 10px;
+        }
+
+        .products-scroll-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+            .products-scroll-container::-webkit-scrollbar-thumb:hover {
+                background: #a8a8a8;
+            }
+
+    .products-scroll-container {
+        scrollbar-width: thin;
+        scrollbar-color: #c1c1c1 rgba(241, 241, 241, 0.5);
+    }
+
+    .product-card {
+        transition: all 0.3s ease;
+        background: #fff;
+        border: 1px solid #e9ecef;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+            border-color: #007bff;
+        }
+
+    .product-image-container {
+        height: 280px;
+        overflow: hidden;
+        background: #f8f9fa;
+        position: relative;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .product-image {
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-in forwards;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.08);
+    }
+
+    .image-placeholder {
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #dee2e6;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .price-badge .badge {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.25);
+        font-size: 0.9rem;
+    }
+
+    .category-badge .badge {
+        font-size: 0.7rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+        background: rgba(108, 117, 125, 0.9) !important;
+    }
+
+    .product-title {
+        font-size: 1rem;
+        line-height: 1.3;
+        min-height: 2.6rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+    }
+
+    .brand-name {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stars i {
+        font-size: 0.85rem;
+        margin-right: 1px;
+    }
+
+    .rating-container {
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .description-text {
+        line-height: 1.4;
+        min-height: 2.8rem;
+        font-size: 0.85rem;
+    }
+
+    .hover-effect {
+        transition: all 0.2s ease;
+        border-width: 2px;
+        font-size: 0.85rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .product-card:hover .hover-effect {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+        transform: scale(1.05);
+    }
+
+    .product-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(0,123,255,0.1), rgba(0,123,255,0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .product-card:hover::before {
+        opacity: 1;
+    }
+
+    .card-body {
+        position: relative;
+        z-index: 2;
+    }
+
+    @@keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .product-image-container {
+            height: 200px;
+        }
+
+        .product-title {
+            font-size: 1rem;
+        }
+
+        .price-badge .badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+</style>
