@@ -1,11 +1,38 @@
 ﻿@model IEnumerable<Product>
 
 <div class="products-page-container flex-grow-1 d-flex flex-column">
-    <div class="container-fluid px-4 py-3">
-        <div class="row">
-            <div class="col-12">
-                <h2 class="text-center mb-4 fw-bold text-primary">Our Products</h2>
-            </div>
+    <div class="row mb-4">
+        <div class="col-12 col-md-5 mb-3 mb-md-0">
+            <h1 class="text-start ps-md-5 fw-bold text-primary">Browse Products</h1>
+        </div>
+
+        <div class="col-12 col-md-7">
+            <form>
+                <div class="d-flex flex-column flex-md-row justify-content-end align-items-center align-items-md-center gap-2 px-md-4">
+                    <input type="text"
+                           class="form-control rounded-pill px-3"
+                           id="searchField"
+                           placeholder="Search Product"
+                           style="max-width: 250px;">
+
+                    <select class="form-select rounded-pill px-3 bg-light"
+                            style="width: 100%; max-width: 180px;"
+                            aria-label="Sort products">
+                        <option selected>Sort</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+
+                    <button type="button"
+                            class="btn btn-outline-info rounded-pill px-4"
+                            style="transition: 0.3s ease;"
+                            onmouseover="this.classList.add('btn-primary'); this.classList.remove('btn-outline-primary');"
+                            onmouseout="this.classList.remove('btn-primary'); this.classList.add('btn-outline-primary');">
+                        Filter
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -44,12 +71,6 @@
 
                                     <div class="price-badge position-absolute top-0 end-0 m-2">
                                         <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
-                                            $@product.Price.ToString("F2")
-                                        </span>
-                                    </div>
-
-                                    <div class="category-badge position-absolute top-0 start-0 m-2">
-                                        <span class="badge bg-secondary text-black px-2 py-1 rounded">
                                             @product.Category.Name
                                         </span>
                                     </div>
@@ -59,11 +80,11 @@
                                     <h5 class="product-title text-dark mb-2 fw-bold text-center">
                                         @product.Name
                                     </h5>
-                                    <div class="text-center mb-2">
+                                    <div class="text-center mb-1">
                                         <small class="text-muted">by</small>
                                         <span class="brand-name text-primary fw-semibold">@product.Brand</span>
                                     </div>
-                                    <div class="rating-container text-center mb-2">
+                                    <div class="rating-container text-center mb-1">
                                         <div class="stars mb-1">
                                             @for (int i = 1; i <= 5; i++)
                                             {
@@ -86,13 +107,7 @@
                                         </small>
                                     </div>
 
-                                    <div class="product-description flex-grow-1 mb-1">
-                                        <p class="text-muted small text-center mb-0 description-text">
-                                            @(product.Description.Length > 100 ?
-                                      product.Description.Substring(0, 100) + "..." :
-                                      product.Description)
-                                        </p>
-                                    </div>
+                                    <h4 class="text-center mb-4">$@product.Price.ToString("F2")</h4>
 
                                     <div class="text-center mt-auto">
                                         <div class="btn btn-outline-primary btn-sm px-4 py-2 rounded-pill hover-effect">
@@ -106,6 +121,19 @@
                     </div>
                 }
             </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link">Previous</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
