@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DotNet.Models;
 using DotNet.DataAccess.Repository.IRepository;
 using DotNet.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DotNetMVC.Areas.Customer.Controllers;
 
@@ -19,20 +20,30 @@ namespace DotNetMVC.Areas.Customer.Controllers;
             unitOfWork = unit;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var viewModel = new ProductListingModel {
-                Products = await unitOfWork.Product.GetAll(includeProperties: "Category"),
-                TotalCount = await unitOfWork.Product.CountAsync()
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Index(ProductListingModel model)
         {
-            IEnumerable<Product> productList = await unitOfWork.Product.GetAll(includeProperties: "Category");
-            return View(productList);
+            var query = await unitOfWork.Product.GetAll(
+                filter: p =>
+                    (string.IsNullOrEmpty(model.SearchTerm) || p.Name.Contains(model.SearchTerm)) &&
+                    (model.SelectedCategories == null || model.SelectedCategories.Contains(p.Category.Name)),
+                includeProperties: "Category",
+                skip: (model.PageNo - 1) * model.PerPage,
+                take: model.PerPage
+            );
+
+            var totalCount = await unitOfWork.Product.CountAsync(p =>
+                (string.IsNullOrEmpty(model.SearchTerm) || p.Name.Contains(model.SearchTerm)) &&
+                (model.SelectedCategories == null || model.SelectedCategories.Contains(p.Category.Name))
+            );
+            foreach (var item in model.PerPageOptions)
+            {
+                item.Selected = item.Value == model.PerPage.ToString();
+            }
+            model.Products = query;
+            model.TotalCount = totalCount;
+
+            return View(model);
         }
 
         public async Task<IActionResult> Details(int id)

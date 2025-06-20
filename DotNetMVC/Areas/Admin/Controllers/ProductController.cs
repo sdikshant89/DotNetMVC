@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DotNetMVC.Areas.Admin.Controllers
 {
-    //Todo check the proper way to rollback and add try catch
     [Area("Admin")]
     public class ProductController : Controller
     {

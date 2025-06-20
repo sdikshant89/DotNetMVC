@@ -8,7 +8,7 @@
     </div>
 
         <div class="row mb-4">
-            <form id="searchFilterForm" method="post" asp-controller="Home" asp-action="Index">
+            <form id="searchFilterForm" method="get" asp-controller="Home" asp-action="Index">
                 <div class="d-flex flex-column flex-md-row justify-content-end align-items-center align-items-md-center gap-2 px-md-4">
                     <input type="text"
                            class="form-control rounded-pill px-3 bg-light border border-info"
@@ -16,12 +16,12 @@
                            placeholder="Search Product"
                            style="max-width: 250px;">
 
-                    <select class="form-select rounded-pill px-3 bg-light border border-info"
-                            style="width: 100%; max-width: 180px;"
+                    <select class="form-select rounded-pill px-3 bg-light border border-info custom-sort-grid"
+                            style="width: 100%; max-width: 120px;"
                             aria-label="Sort products">
                         <option selected>Sort</option>
-                        <option value="1">Price: Low to High</option>
-                        <option value="2">Price: High to Low</option>
+                        <option value="1">Price: Asc</option>
+                        <option value="2">Price: Desc</option>
                         <option value="3">BestSeller</option>
                     </select>
 
@@ -35,13 +35,11 @@
                         Filter
                     </button>
 
-                    <select class="form-select custom-select-grid rounded-pill px-3 bg-light border border-info"
+                    <select asp-for="PerPage"
+                            asp-items="Model.PerPageOptions"
+                            class="form-select rounded-pill px-3 bg-light border border-info custom-select-grid"
                             style="max-width: 70px;"
-                            aria-label="PerPage"
-                            asp-for="PerPage">
-                        <option value="4">4</option>
-                        <option value="8">8</option>
-                        <option value="12">12</option>
+                            onchange="this.form.submit()">
                     </select>
                 </div>
             </form>
@@ -175,16 +173,35 @@
                     </div>
                 }
             </div>
-            <nav aria-label="Page navigation example">
+            @{
+                var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PerPage);
+            }
+
+            <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link">Previous</a>
+
+                    <li class="page-item @(Model.PageNo <= 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           href="@Url.Action("Index", new { pageNo = Model.PageNo - 1, Model.PerPage, Model.SearchTerm, SelectedCategories = Model.SelectedCategories })">
+                            Previous
+                        </a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(Model.PageNo == i ? "active" : "")">
+                            <a class="page-link"
+                               href="@Url.Action("Index", new { pageNo = i, Model.PerPage, Model.SearchTerm, SelectedCategories = Model.SelectedCategories })">
+                                @i
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.PageNo >= totalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           href="@Url.Action("Index", new { pageNo = Model.PageNo + 1, Model.PerPage, Model.SearchTerm, SelectedCategories = Model.SelectedCategories })">
+                            Next
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -195,6 +212,14 @@
 <style>
     .custom-select-grid {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-grid' viewBox='0 0 16 16'%3E%3Cpath d='M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+    }
+
+    .custom-sort-grid {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-filter' viewBox='0 0 16 16'%3E%3Cpath d='M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 0.75rem center;
         background-size: 1rem;
