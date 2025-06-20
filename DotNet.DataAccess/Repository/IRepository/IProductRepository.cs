@@ -16,5 +16,6 @@ namespace DotNet.DataAccess.Repository.IRepository
         // Save all changes
         Task<bool> AnyAsync(Expression<Func<Product, bool>> predicate);
         Task<int> CountAsync(Expression<Func<Product, bool>>? predicate = null);
+        IQueryable<Product> GetQueryable(Expression<Func<Product, bool>>? filter = null, string? includeProperties = null);
     }
 }

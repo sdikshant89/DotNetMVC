@@ -20,10 +20,10 @@ namespace DotNet.DataAccess.Repository
         }
 
         public async Task<IEnumerable<Product>> GetAll(
-        Expression<Func<Product, bool>>? filter = null,
-        string? includeProperties = null,
-        int? skip = null,
-        int? take = null)
+            Expression<Func<Product, bool>>? filter = null,
+            string? includeProperties = null,
+            int? skip = null,
+            int? take = null)
         {
             IQueryable<Product> query = dbSet;
 
@@ -59,6 +59,29 @@ namespace DotNet.DataAccess.Repository
                 ? await _db.Products.CountAsync(predicate)
                 : await _db.Products.CountAsync();
         }
+
+        public IQueryable<Product> GetQueryable(
+            Expression<Func<Product, bool>>? filter = null,
+            string? includeProperties = null)
+        {
+            IQueryable<Product> query = _db.Products;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                foreach (var includeProp in includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            return query;
+        }
+
     }
 }
 

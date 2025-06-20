@@ -10,29 +10,32 @@
         <div class="row mb-4">
             <form id="searchFilterForm" method="get" asp-controller="Home" asp-action="Index">
                 <div class="d-flex flex-column flex-md-row justify-content-end align-items-center align-items-md-center gap-2 px-md-4">
-                    <input type="text"
-                           class="form-control rounded-pill px-3 bg-light border border-info"
-                           id="searchField"
-                           placeholder="Search Product"
-                           style="max-width: 250px;">
+                    <div class="position-relative" style="max-width: 280px;">
+                        <input type="text"
+                               class="form-control rounded-pill pe-5 bg-light border border-info"
+                               id="SearchTerm"
+                               asp-for="SearchTerm"
+                               placeholder="Search Product">
 
-                    <select class="form-select rounded-pill px-3 bg-light border border-info custom-sort-grid"
-                            style="width: 100%; max-width: 120px;"
-                            aria-label="Sort products">
-                        <option selected>Sort</option>
-                        <option value="1">Price: Asc</option>
-                        <option value="2">Price: Desc</option>
-                        <option value="3">BestSeller</option>
+                        <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted pointer-events-none"></i>
+                    </div>
+
+                    <select asp-for="SortOption"
+                            asp-items="Model.SortOptions"
+                            class="form-select rounded-pill px-3 bg-light border border-info custom-sort-grid"
+                            onchange="this.form.submit()"
+                            style="max-width: 110px;">
                     </select>
 
                     <button type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#filterModal"
-                            class="btn btn-outline-success rounded-pill px-4"
+                            class="btn btn-outline-success rounded-pill px-3"
                             style="transition: 0.3s ease;"
                             onmouseover="this.classList.add('btn-primary'); this.classList.remove('btn-outline-primary');"
                             onmouseout="this.classList.remove('btn-primary'); this.classList.add('btn-outline-primary');">
                         Filter
+                        <i class="bi bi-funnel-fill"></i>
                     </button>
 
                     <select asp-for="PerPage"
@@ -210,6 +213,10 @@
 </div>
 
 <style>
+    .bi-search {
+        z-index: 10;
+    }
+
     .custom-select-grid {
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-grid' viewBox='0 0 16 16'%3E%3Cpath d='M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;

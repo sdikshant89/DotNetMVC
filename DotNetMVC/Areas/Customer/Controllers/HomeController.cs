@@ -4,6 +4,8 @@ using DotNet.Models;
 using DotNet.DataAccess.Repository.IRepository;
 using DotNet.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using DotNet.Utility;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNetMVC.Areas.Customer.Controllers;
 
@@ -20,30 +22,53 @@ namespace DotNetMVC.Areas.Customer.Controllers;
             unitOfWork = unit;
         }
 
+        public IQueryable<Product> ApplySort(IQueryable<Product> query, SortBy sortBy)
+        {
+            return sortBy switch
+            {
+                SortBy.PriceAsc => query.OrderBy(p => p.Price),
+                SortBy.PriceDesc => query.OrderByDescending(p => p.Price),
+                SortBy.BestSeller => query.OrderByDescending(p => p.Rating * p.RatingNos),
+                _ => query
+            };
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Index(ProductListingModel model)
         {
-            var query = await unitOfWork.Product.GetAll(
-                filter: p =>
-                    (string.IsNullOrEmpty(model.SearchTerm) || p.Name.Contains(model.SearchTerm)) &&
-                    (model.SelectedCategories == null || model.SelectedCategories.Contains(p.Category.Name)),
-                includeProperties: "Category",
-                skip: (model.PageNo - 1) * model.PerPage,
-                take: model.PerPage
-            );
+            var search = model.SearchTerm?.Trim().ToLower();
 
-            var totalCount = await unitOfWork.Product.CountAsync(p =>
-                (string.IsNullOrEmpty(model.SearchTerm) || p.Name.Contains(model.SearchTerm)) &&
-                (model.SelectedCategories == null || model.SelectedCategories.Contains(p.Category.Name))
-            );
+            var filteredQuery = unitOfWork.Product
+                .GetQueryable(p =>
+                    (string.IsNullOrEmpty(search) || p.Name.ToLower().Contains(search)) &&
+                    (model.SelectedCategories == null || model.SelectedCategories.Contains(p.Category.Name)),
+                    includeProperties: "Category"
+                );
+
+            filteredQuery = ApplySort(filteredQuery, model.SortOption);
+
+            var totalCount = await filteredQuery.CountAsync();
+
+            var products = await filteredQuery
+                .Skip((model.PageNo - 1) * model.PerPage)
+                .Take(model.PerPage)
+                .ToListAsync();
+
+            model.Products = products;
+            model.TotalCount = totalCount;
+
+            // Update selected items
             foreach (var item in model.PerPageOptions)
             {
                 item.Selected = item.Value == model.PerPage.ToString();
             }
-            model.Products = query;
-            model.TotalCount = totalCount;
+            foreach (var item in model.SortOptions)
+            {
+                item.Selected = item.Value == ((int)model.SortOption).ToString();
+            }
 
-            return View(model);
+        return View(model);
         }
 
         public async Task<IActionResult> Details(int id)
