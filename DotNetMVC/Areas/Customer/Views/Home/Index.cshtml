@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model ProductListingModel
 
 <div class="flex-grow-1 d-flex flex-column">
     <div class="row">
@@ -8,7 +8,7 @@
     </div>
 
         <div class="row mb-4">
-            <form>
+            <form id="searchFilterForm" method="post" asp-controller="Home" asp-action="Index">
                 <div class="d-flex flex-column flex-md-row justify-content-end align-items-center align-items-md-center gap-2 px-md-4">
                     <input type="text"
                            class="form-control rounded-pill px-3 bg-light border border-info"
@@ -34,6 +34,15 @@
                             onmouseout="this.classList.remove('btn-primary'); this.classList.add('btn-outline-primary');">
                         Filter
                     </button>
+
+                    <select class="form-select custom-select-grid rounded-pill px-3 bg-light border border-info"
+                            style="max-width: 70px;"
+                            aria-label="PerPage"
+                            asp-for="PerPage">
+                        <option value="4">4</option>
+                        <option value="8">8</option>
+                        <option value="12">12</option>
+                    </select>
                 </div>
             </form>
 
@@ -85,7 +94,7 @@
     <div class="products-scroll-container flex-grow-1">
         <div class="container px-4">
             <div class="row justify-content-center pb-4">
-                @foreach (var product in Model)
+                @foreach (var product in Model.Products)
                 {
                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4" style="max-width: 320px;">
                         <div class="product-card h-100 shadow-sm border-0 rounded-3 overflow-hidden position-relative">
@@ -184,6 +193,13 @@
 </div>
 
 <style>
+    .custom-select-grid {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-grid' viewBox='0 0 16 16'%3E%3Cpath d='M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+    }
 
     .form-check-input {
         border-radius: 0.25rem;

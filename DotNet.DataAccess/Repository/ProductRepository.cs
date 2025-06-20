@@ -23,6 +23,12 @@ namespace DotNet.DataAccess.Repository
         {
             return await _db.Products.AsNoTracking().AnyAsync(predicate);
         }
+        public async Task<int> CountAsync(Expression<Func<Product, bool>>? predicate = null)
+        {
+            return predicate != null
+                ? await _db.Products.CountAsync(predicate)
+                : await _db.Products.CountAsync();
+        }
     }
 }
 

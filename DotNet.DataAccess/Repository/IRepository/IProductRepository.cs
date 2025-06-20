@@ -8,5 +8,6 @@ namespace DotNet.DataAccess.Repository.IRepository
         void Update(Product obj);
         // Save all changes
         Task<bool> AnyAsync(Expression<Func<Product, bool>> predicate);
+        Task<int> CountAsync(Expression<Func<Product, bool>>? predicate = null);
     }
 }
