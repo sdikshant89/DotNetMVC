@@ -9,8 +9,6 @@ namespace DotNet.Models.ViewModels
         public IEnumerable<Product> Products { get; set; }
 
         public string? SearchTerm { get; set; }
-        public List<string>? SelectedCategories { get; set; }
-
         public int PageNo { get; set; } = 1;
         public int TotalCount { get; set; }
 
@@ -30,6 +28,9 @@ namespace DotNet.Models.ViewModels
             new SelectListItem { Text = "8", Value = "8" },
             new SelectListItem { Text = "12", Value = "12" }
         };
+
+        public List<string>? SelectedCategories { get; set; } = new();
+        public List<Category> Categories { get; set; } = new();
     }
 }
 

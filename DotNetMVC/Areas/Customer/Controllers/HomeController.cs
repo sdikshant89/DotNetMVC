@@ -38,11 +38,17 @@ namespace DotNetMVC.Areas.Customer.Controllers;
         public async Task<IActionResult> Index(ProductListingModel model)
         {
             var search = model.SearchTerm?.Trim().ToLower();
+            var categories = await unitOfWork.Category.GetAll();
+            model.Categories = categories.Select(c => new Category
+            {
+                CategoryId = c.CategoryId,
+                Name = c.Name
+            }).ToList();
 
             var filteredQuery = unitOfWork.Product
                 .GetQueryable(p =>
                     (string.IsNullOrEmpty(search) || p.Name.ToLower().Contains(search)) &&
-                    (model.SelectedCategories == null || model.SelectedCategories.Contains(p.Category.Name)),
+                    (model.SelectedCategories == null || model.SelectedCategories.Count == 0 || model.SelectedCategories.Contains(p.Category.Name)),
                     includeProperties: "Category"
                 );
 

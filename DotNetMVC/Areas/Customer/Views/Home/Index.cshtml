@@ -55,35 +55,40 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form>
+                            <form method="get" asp-action="Index">
                                 <fieldset>
                                     <label for="customRange3" class="form-label">Price range</label>
                                     <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">
                                 </fieldset>
                                 <fieldset class="my-4">
                                     <label class="mb-2">Select Categories</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="cat1" id="cat1">
-                                        <label class="form-check-label" for="cat1">Category 1</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="cat2" id="cat2">
-                                        <label class="form-check-label" for="cat2">Category 2</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="cat3" id="cat3">
-                                        <label class="form-check-label" for="cat3">Category 3</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="cat4" id="cat4">
-                                        <label class="form-check-label" for="cat4">Category 4</label>
-                                    </div>
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="SelectedCategories"
+                                                   value="@category.Name"
+                                                   id="@category.Name"
+                                                   @(Model.SelectedCategories != null && Model.SelectedCategories.Contains(category.Name) ? "checked" : "") />
+                                            <label class="form-check-label" for="@category.Name">
+                                                @category.Name
+                                            </label>
+                                        </div>
+                                    }
                                 </fieldset>
+                                <div>
+                                    <button type="submit" class="btn btn-warning rounded-pill px-4">Filter</button>
+                                    <a href="@Url.Action("Index", new {
+                                        SearchTerm = Model.SearchTerm,
+                                        SortOption = Model.SortOption,
+                                        PerPage = Model.PerPage
+                                        })"
+                                       class="btn btn-danger rounded-pill px-4">
+                                        Reset Filters
+                                    </a>
+                                </div>
                             </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-warning rounded-pill px-4">Filter</button>
-                            <button type="button" class="btn btn-danger rounded-pill px-4" data-bs-dismiss="modal">Discard Changes</button>
                         </div>
                     </div>
                 </div>
